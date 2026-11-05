@@ -1,0 +1,48 @@
+{"id": "int-001", "tag": "giria", "texto": "mano manda 2 x-bacon aí", "label": "novo_pedido"}
+{"id": "int-002", "tag": "abreviacao", "texto": "oi, qro 1 pizza de calabresa p hj", "label": "novo_pedido"}
+{"id": "int-003", "tag": "typo", "texto": "quero uma lazanha e um refri", "label": "novo_pedido"}
+{"id": "int-004", "tag": "formal", "texto": "Gostaria de fazer um pedido de duas marmitas de frango, por favor.", "label": "novo_pedido"}
+{"id": "int-005", "tag": "giria", "texto": "bora de açaí 500 que eu tô com fome kkk", "label": "novo_pedido"}
+{"id": "int-006", "tag": "abreviacao", "texto": "vc tem como mandar 3 pastel de queijo? vr", "label": "novo_pedido"}
+{"id": "int-007", "tag": "typo", "texto": "me ve 1 hamburger artezanal sem cebola", "label": "novo_pedido"}
+{"id": "int-008", "tag": "ambigua", "texto": "pode ser aquele de sempre, o x-salada", "label": "novo_pedido"}
+{"id": "int-009", "tag": "giria", "texto": "mano a pizza chegou fria e sem metade do recheio, assim não dá", "label": "reclamacao"}
+{"id": "int-010", "tag": "abreviacao", "texto": "pedi 2 coxinha e veio só 1, mt ruim isso", "label": "reclamacao"}
+{"id": "int-011", "tag": "typo", "texto": "meu pedido chegou todo derramado, absurdo", "label": "reclamacao"}
+{"id": "int-012", "tag": "formal", "texto": "Venho por meio desta registrar minha insatisfação: o pedido chegou com uma hora de atraso.", "label": "reclamacao"}
+{"id": "int-013", "tag": "giria", "texto": "o entregador sumiu com meu lanche, que palhaçada", "label": "reclamacao"}
+{"id": "int-014", "tag": "abreviacao", "texto": "vcs trocaram meu suco sem avisar, n gostei", "label": "reclamacao"}
+{"id": "int-015", "tag": "typo", "texto": "a lasanha veio crua no meio, pessimo", "label": "reclamacao"}
+{"id": "int-016", "tag": "ambigua", "texto": "show de bola, chegou 2 horas depois e frio, parabéns hein", "label": "reclamacao"}
+{"id": "int-017", "tag": "giria", "texto": "mano vcs entregam lá no centro?", "label": "duvida"}
+{"id": "int-018", "tag": "abreviacao", "texto": "qual o hr de funcionamento de vcs? abrem dom?", "label": "duvida"}
+{"id": "int-019", "tag": "typo", "texto": "a marmita vem com salada ou so arroz e feijao?", "label": "duvida"}
+{"id": "int-020", "tag": "formal", "texto": "Poderiam informar se há opções sem glúten no cardápio?", "label": "duvida"}
+{"id": "int-021", "tag": "giria", "texto": "tem como pagar no pix na entrega ou só pelo app?", "label": "duvida"}
+{"id": "int-022", "tag": "abreviacao", "texto": "o açaí de 500 tem qts gramas? e a granola vem à parte?", "label": "duvida"}
+{"id": "int-023", "tag": "typo", "texto": "voces aseitam vale refeição?", "label": "duvida"}
+{"id": "int-024", "tag": "ambigua", "texto": "queria saber se o x-bacon tem cebola, pq se tiver eu peço outro", "label": "duvida"}
+{"id": "int-025", "tag": "giria", "texto": "mano cancela meu pedido, deu ruim aqui", "label": "cancelamento"}
+{"id": "int-026", "tag": "abreviacao", "texto": "pf cancela o pedido 4821, mudei de ideia", "label": "cancelamento"}
+{"id": "int-027", "tag": "typo", "texto": "quero cancelar meu pedido, nao quero mais", "label": "cancelamento"}
+{"id": "int-028", "tag": "formal", "texto": "Solicito o cancelamento imediato do pedido realizado há dez minutos.", "label": "cancelamento"}
+{"id": "int-029", "tag": "giria", "texto": "esquece, não manda mais nada, já comi outra coisa", "label": "cancelamento"}
+{"id": "int-030", "tag": "abreviacao", "texto": "cancela tdo pls, vou n precisar", "label": "cancelamento"}
+{"id": "int-031", "tag": "typo", "texto": "cancelar a entrga por favor", "label": "cancelamento"}
+{"id": "int-032", "tag": "ambigua", "texto": "desisti, pode cancelar. depois eu peço de novo", "label": "cancelamento"}
+{"id": "int-033", "tag": "giria", "texto": "mano que pizza absurda, melhor da cidade, vlw", "label": "elogio"}
+{"id": "int-034", "tag": "abreviacao", "texto": "chegou rapidão e tava mt gostoso, parabéns", "label": "elogio"}
+{"id": "int-035", "tag": "typo", "texto": "o açai estava delicioso, nota 10", "label": "elogio"}
+{"id": "int-036", "tag": "formal", "texto": "Gostaria de parabenizar a equipe pelo excelente atendimento e pela qualidade da refeição.", "label": "elogio"}
+{"id": "int-037", "tag": "giria", "texto": "o motoboy foi nota mil, super gente boa", "label": "elogio"}
+{"id": "int-038", "tag": "abreviacao", "texto": "amei a marmita, vcs são top!", "label": "elogio"}
+{"id": "int-039", "tag": "typo", "texto": "a lasanha estava perfeita, voltarei a pedir", "label": "elogio"}
+{"id": "int-040", "tag": "ambigua", "texto": "demorou um pouco mas valeu cada minuto, tava perfeito", "label": "elogio"}
+{"id": "int-041", "tag": "giria", "texto": "e aí, meu pedido já saiu?", "label": "acompanhamento"}
+{"id": "int-042", "tag": "abreviacao", "texto": "qto tempo falta p chegar meu pedido?", "label": "acompanhamento"}
+{"id": "int-043", "tag": "typo", "texto": "meu pedido ja saiu pra entrga?", "label": "acompanhamento"}
+{"id": "int-044", "tag": "formal", "texto": "Poderia verificar o status do pedido 7730, por gentileza?", "label": "acompanhamento"}
+{"id": "int-045", "tag": "giria", "texto": "o motoboy já tá vindo? tô esperando aqui na portaria", "label": "acompanhamento"}
+{"id": "int-046", "tag": "abreviacao", "texto": "pedido 1209 já foi aceito? n recebi notif", "label": "acompanhamento"}
+{"id": "int-047", "tag": "typo", "texto": "em que pé esta meu pedido?", "label": "acompanhamento"}
+{"id": "int-048", "tag": "ambigua", "texto": "ainda n chegou, ta chegando?", "label": "acompanhamento"}
