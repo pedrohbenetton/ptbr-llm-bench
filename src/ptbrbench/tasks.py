@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from ptbrbench.core import Example, Task
-from ptbrbench.scorers import label_scorer
+from ptbrbench.scorers import json_fields_scorer, label_scorer
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
@@ -31,3 +31,20 @@ def load_intencao(path: Path | None = None) -> Task:
             d = json.loads(line)
             exs.append(Example(d["id"], d["texto"], d["label"], d["tag"]))
     return Task("intencao", exs, label_scorer, system=INTENCAO_SYSTEM)
+
+
+EXTRACAO_SYSTEM = (
+    "Você extrai pedidos de delivery em português do Brasil. Responda somente com um JSON "
+    'no formato {"itens": [{"nome": str, "quantidade": int, "observacoes": [str]}], '
+    '"restricoes": [str], "pagamento": "pix"|"dinheiro"|"credito"|"debito"|"vale_refeicao"|null}.'
+)
+
+
+def load_extracao_pedido(path: Path | None = None) -> Task:
+    path = path or DATA_DIR / "extracao_pedido.jsonl"
+    exs = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            d = json.loads(line)
+            exs.append(Example(d["id"], d["texto"], d["gold"], d["tag"]))
+    return Task("extracao_pedido", exs, json_fields_scorer, system=EXTRACAO_SYSTEM)
