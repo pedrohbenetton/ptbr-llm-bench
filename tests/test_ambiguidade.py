@@ -27,3 +27,11 @@ def test_ambiguidade_balanceado_e_prompts_completos():
 def test_scorer_aceita_letra_com_pontuacao():
     t = load_ambiguidade()
     assert t.scorer("A)", "a") == 1.0 and t.scorer("b", "a") == 0.0
+
+
+def test_sem_distrator_repetido_nem_refri_como_regionalismo():
+    t = load_ambiguidade()
+    assert sum("fazer um pedido novo" in e.prompt for e in t.examples) <= 1
+    assert not any("refri" in e.prompt.lower() for e in t.examples if e.tag == "regionalismo")
+    amb040 = next(e for e in t.examples if e.id == "amb-040")
+    assert "cancelar" in amb040.prompt and "Pode cancelar" not in amb040.prompt
