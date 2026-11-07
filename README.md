@@ -9,6 +9,18 @@ uv sync
 uv run pytest
 ```
 
+## Rodar o benchmark
+
+```bash
+# modelo aberto + LoRA (precisa de GPU; use o extra hf)
+uv run --extra hf python -m ptbrbench --model hf:Qwen/Qwen2.5-1.5B-Instruct --model hf:Qwen/Qwen2.5-1.5B-Instruct@pedrohbenetton/pedido-extractor-ptbr-lora
+
+# API da Anthropic (gasta dinheiro real da chave em ANTHROPIC_API_KEY; teste antes com --limit 5)
+uv run --extra api python -m ptbrbench --model anthropic:claude-haiku-5-5 --limit 5
+```
+
+Gera `results/results.json` (score por exemplo) e `results/report.md` (tabela por tarefa).
+
 ## Limitações conhecidas dos datasets
 
 - `intencao`: os itens com tag `ambigua` têm rótulo escolhido por julgamento. `int-048` ("ainda n chegou, ta chegando?") é `acompanhamento`, mas poderia ser lido como `reclamacao`.

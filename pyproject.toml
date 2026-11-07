@@ -5,6 +5,13 @@ description = "Benchmark escrito à mão para LLMs em PT-BR informal"
 requires-python = ">=3.10"
 dependencies = []
 
+[project.optional-dependencies]
+api = ["anthropic>=0.40"]
+hf = ["torch", "transformers", "peft", "bitsandbytes", "accelerate"]
+
+[project.scripts]
+ptbrbench = "ptbrbench.cli:main"
+
 [dependency-groups]
 dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.5"]
 
