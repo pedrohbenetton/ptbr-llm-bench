@@ -45,3 +45,8 @@ def test_report_sorted_by_average_desc():
     assert md.index("forte") < md.index("fraco")
     assert "| t1 | t2 |" in md or "t1" in md and "t2" in md
     assert "80.0%" in md  # média do forte
+
+
+def test_run_guarda_resposta_bruta_por_exemplo():
+    res = run({"m": lambda system, prompt: f"resp-{prompt}"}, [_task()])
+    assert res["m"]["intencao"]["outputs"] == {"1": "resp-q1", "2": "resp-q2", "3": "resp-q3"}
