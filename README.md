@@ -4,7 +4,7 @@
 
 Benchmark pequeno e escrito à mão para comparar LLMs em PT-BR informal (gírias, abreviações, erros de digitação, correções no meio da frase). A tarefa `extracao_pedido` reaproveita o conjunto difícil do projeto de fine-tuning [pedido-extractor-ptbr](https://github.com/pedrohbenetton/pedido-extractor-ptbr).
 
-**Status:** núcleo (tarefas, scorers, runner, relatório), adapters (Anthropic e Hugging Face) e três datasets escritos à mão (`intencao` 48, `ambiguidade` 40, `extracao_pedido` 60) prontos e testados. Uma primeira rodada com dois modelos abertos foi executada (veja Resultados); modelos de API ainda não. Veja [SPEC.md](SPEC.md).
+**Status:** núcleo (tarefas, scorers, runner, relatório), adapters (Anthropic e Hugging Face) e três datasets escritos à mão (`intencao` 48, `ambiguidade` 40, `extracao_pedido` 60) prontos e testados. Uma primeira rodada (dois modelos abertos e o Claude Haiku 5.5) foi executada; veja Resultados. Veja [SPEC.md](SPEC.md).
 
 ```bash
 uv sync
@@ -35,20 +35,22 @@ uv run python -m ptbrbench rescore results/results.json --out results/rescored
 
 ## Resultados (primeira rodada)
 
-Qwen2.5-1.5B-Instruct em 4 bits, base contra base + LoRA [`pedido-extractor-ptbr-lora`](https://huggingface.co/pedrohbenetton/pedido-extractor-ptbr-lora) (treinado só em extração de pedido). Decodificação determinística, **uma execução** (a repetição da rodada deu exatamente a mesma tabela), T4. Nota em %, sobre 48 (`intencao`), 40 (`ambiguidade`) e 60 (`extracao_pedido`) exemplos.
+Três modelos: Qwen2.5-1.5B-Instruct em 4 bits, base e com o LoRA [`pedido-extractor-ptbr-lora`](https://huggingface.co/pedrohbenetton/pedido-extractor-ptbr-lora) (treinado só em extração de pedido), e Claude Haiku 5.5 pela API (zero-shot, esforço `low`). Decodificação determinística nos Qwen, **uma execução** (repetir a rodada deu exatamente a mesma tabela), T4. Nota em %, sobre 48 (`intencao`), 40 (`ambiguidade`) e 60 (`extracao_pedido`) exemplos. Respostas brutas e notas por exemplo em [`results/published/`](results/published/).
 
 | Modelo | Média (rígida) | extracao_pedido | intencao | ambiguidade (rígida) | ambiguidade (tolerante) |
 |---|---|---|---|---|---|
+| Claude Haiku 5.5 (API) | **95,6** | 89,4 | **100,0** | **97,5** | **97,5** |
 | Qwen2.5-1.5B + LoRA | 62,3 | **89,4** | 50,0 | 47,5 | 65,0 |
-| Qwen2.5-1.5B base | 50,2 | 40,6 | **62,5** | 47,5 | **77,5** |
+| Qwen2.5-1.5B base | 50,2 | 40,6 | 62,5 | 47,5 | 77,5 |
 
 **Leitura honesta**
 
-- O LoRA ganha muito na tarefa para a qual foi treinado (`extracao_pedido`, 40,6 para 89,4; nota por campo, não é o exact match do projeto de fine-tuning) e **perde nas outras duas**: cerca de 12 pontos na `intencao` e na `ambiguidade` tolerante. Os dois sentidos coincidem com um custo de especialização, mas são 5 e 6 itens em amostras pequenas e uma só execução: é indício, não prova.
-- Na `ambiguidade` a nota rígida (47,5 para os dois) escondia a diferença: vários `b) elogio sincero` pontuavam zero com a letra certa. A nota tolerante foi **criada depois de ver esse resultado**, e as duas são mostradas por isso. Com duas opções o acaso é 50%: o modelo base (77,5) está bem acima dele, o LoRA (65,0) só moderadamente.
-- A hipótese de que o LoRA responderia JSON no lugar das etiquetas foi testada e **descartada** (0 de 88 respostas começam com `{`). A causa da queda na `intencao` não foi identificada; há respostas com duas etiquetas (`elogio, acompanhamento`) que contam como erro.
-- A média mistura uma tarefa em que o LoRA é especialista com duas em que não é; não é uma "nota geral".
-- Faltam modelos de API e modelos maiores: nenhuma conclusão sobre eles.
+- **`intencao` e `ambiguidade` não separam modelos fortes:** o Haiku tira 100,0 e 97,5, efeito teto. Hoje elas só distinguem modelos pequenos. O único erro do Haiku na `ambiguidade` (`amb-018`, "Muito bom, repito com certeza.") tem gabarito discutível, sem marcador de ironia ou elogio.
+- **`extracao_pedido` é a tarefa que discrimina:** o LoRA de 1,5B empata com o Haiku em nota (89,4) e em itens com nota máxima (43 de 60 cada). Por categoria os dois divergem (o Haiku vai melhor em `correcao`, 100 contra 70,8, e `quantidade_extenso`; o LoRA em `negacao` e `typo`), mas com poucos itens por categoria.
+- **Isso não quer dizer que o LoRA é melhor que o Haiku.** O Haiku foi avaliado sem exemplos e sem as convenções do gabarito (parte do que conta como erro é convenção, como "ao ponto" contra "no ponto" no `hard-011`, já marcado como ambíguo). O LoRA foi treinado exatamente nesse formato.
+- O LoRA ganha muito na tarefa treinada (40,6 para 89,4 contra o base) e **perde nas outras duas**: cerca de 12 pontos na `intencao` e na `ambiguidade` tolerante. Coincide com um custo de especialização, mas são 5 e 6 itens, uma só execução: indício, não prova. A causa da queda na `intencao` não foi identificada (a hipótese de o LoRA responder JSON foi testada e descartada: 0 de 88).
+- Na `ambiguidade` a nota rígida escondia a diferença entre os Qwen (vários `b) elogio sincero` pontuavam zero com a letra certa). A nota tolerante foi **criada depois de ver esse resultado**; as duas aparecem por isso.
+- A média mistura tarefas muito diferentes e não é uma "nota geral". O custo da rodada com API não foi medido.
 
 ## Limitações conhecidas dos datasets
 
