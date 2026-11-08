@@ -2,7 +2,7 @@
 
 Benchmark pequeno e escrito à mão para comparar LLMs em PT-BR informal (gírias, abreviações, erros de digitação, correções no meio da frase).
 
-**Status:** núcleo (tarefas, scorers, runner, relatório), adapters (Anthropic e Hugging Face) e três datasets escritos à mão (`intencao` 48, `ambiguidade` 40, `extracao_pedido` 60) prontos e testados. Nenhuma rodada de modelos foi executada, então este repo **não reporta nenhum número ainda**. Veja [SPEC.md](SPEC.md).
+**Status:** núcleo (tarefas, scorers, runner, relatório), adapters (Anthropic e Hugging Face) e três datasets escritos à mão (`intencao` 48, `ambiguidade` 40, `extracao_pedido` 60) prontos e testados. Uma primeira rodada com dois modelos abertos foi executada (veja Resultados); modelos de API ainda não. Veja [SPEC.md](SPEC.md).
 
 ```bash
 uv sync
@@ -30,6 +30,23 @@ A nota tolerante foi acrescentada **depois** da primeira rodada, ao ver que resp
 ```bash
 uv run python -m ptbrbench rescore results/results.json --out results/rescored
 ```
+
+## Resultados (primeira rodada)
+
+Qwen2.5-1.5B-Instruct em 4 bits, base contra base + LoRA [`pedido-extractor-ptbr-lora`](https://huggingface.co/pedrohbenetton/pedido-extractor-ptbr-lora) (treinado só em extração de pedido). Decodificação determinística, **uma execução** (a repetição da rodada deu exatamente a mesma tabela), T4. Nota em %, sobre 48 (`intencao`), 40 (`ambiguidade`) e 60 (`extracao_pedido`) exemplos.
+
+| Modelo | Média (rígida) | extracao_pedido | intencao | ambiguidade (rígida) | ambiguidade (tolerante) |
+|---|---|---|---|---|---|
+| Qwen2.5-1.5B + LoRA | 62,3 | **89,4** | 50,0 | 47,5 | 65,0 |
+| Qwen2.5-1.5B base | 50,2 | 40,6 | **62,5** | 47,5 | **77,5** |
+
+**Leitura honesta**
+
+- O LoRA ganha muito na tarefa para a qual foi treinado (`extracao_pedido`, 40,6 para 89,4; nota por campo, não é o exact match do projeto de fine-tuning) e **perde nas outras duas**: cerca de 12 pontos na `intencao` e na `ambiguidade` tolerante. Os dois sentidos coincidem com um custo de especialização, mas são 5 e 6 itens em amostras pequenas e uma só execução: é indício, não prova.
+- Na `ambiguidade` a nota rígida (47,5 para os dois) escondia a diferença: vários `b) elogio sincero` pontuavam zero com a letra certa. A nota tolerante foi **criada depois de ver esse resultado**, e as duas são mostradas por isso. Com duas opções o acaso é 50%: o modelo base (77,5) está bem acima dele, o LoRA (65,0) só moderadamente.
+- A hipótese de que o LoRA responderia JSON no lugar das etiquetas foi testada e **descartada** (0 de 88 respostas começam com `{`). A causa da queda na `intencao` não foi identificada; há respostas com duas etiquetas (`elogio, acompanhamento`) que contam como erro.
+- A média mistura uma tarefa em que o LoRA é especialista com duas em que não é; não é uma "nota geral".
+- Faltam modelos de API e modelos maiores: nenhuma conclusão sobre eles.
 
 ## Limitações conhecidas dos datasets
 
