@@ -35,22 +35,26 @@ uv run python -m ptbrbench rescore results/results.json --out results/rescored
 
 ## Resultados (primeira rodada)
 
-Três modelos: Qwen2.5-1.5B-Instruct em 4 bits, base e com o LoRA [`pedido-extractor-ptbr-lora`](https://huggingface.co/pedrohbenetton/pedido-extractor-ptbr-lora) (treinado só em extração de pedido), e Claude Haiku 5.5 pela API (zero-shot, esforço `low`). Decodificação determinística nos Qwen, **uma execução** (repetir a rodada deu exatamente a mesma tabela), T4. Nota em %, sobre 48 (`intencao`), 40 (`ambiguidade`) e 60 (`extracao_pedido`) exemplos. Respostas brutas e notas por exemplo em [`results/published/`](results/published/).
+Quatro modelos: Qwen2.5-1.5B-Instruct em 4 bits, base, com o LoRA **v1** e com o LoRA **v2** (v2 publicado em [`pedido-extractor-ptbr-lora`](https://huggingface.co/pedrohbenetton/pedido-extractor-ptbr-lora); ambos treinados só em extração de pedido, o v2 com dados mais variados: correções, typos, quantidade por extenso), e Claude Haiku 5.5 pela API (zero-shot, esforço `low`). Decodificação determinística nos Qwen, **uma execução** (repetir deu respostas idênticas), T4. Nota em %, sobre 48 (`intencao`), 40 (`ambiguidade`) e 60 (`extracao_pedido`) exemplos. Respostas brutas e notas por exemplo em [`results/published/`](results/published/).
 
 | Modelo | Média (rígida) | extracao_pedido | intencao | ambiguidade (rígida) | ambiguidade (tolerante) |
 |---|---|---|---|---|---|
 | Claude Haiku 5.5 (API) | **95,6** | 89,4 | **100,0** | **97,5** | **97,5** |
-| Qwen2.5-1.5B + LoRA | 62,3 | **89,4** | 50,0 | 47,5 | 65,0 |
+| Qwen2.5-1.5B + LoRA v2 | 66,9 | **96,1** | 64,6 | 40,0 | 70,0 |
+| Qwen2.5-1.5B + LoRA v1 | 62,3 | 89,4 | 50,0 | 47,5 | 65,0 |
 | Qwen2.5-1.5B base | 50,2 | 40,6 | 62,5 | 47,5 | 77,5 |
+
+Na `extracao_pedido` a nota é por campo do JSON e compara listas estritamente (ordem, acento). Com a métrica do projeto de fine-tuning (exact match normalizado, sobre as mesmas respostas): base 3,3 · v1 71,7 · **v2 90,0** · Haiku 75,0 (o mesmo Haiku deu 68,3 em outra execução: a API não permite fixar a aleatoriedade).
 
 **Leitura honesta**
 
-- **`intencao` e `ambiguidade` não separam modelos fortes:** o Haiku tira 100,0 e 97,5, efeito teto. Hoje elas só distinguem modelos pequenos. O único erro do Haiku na `ambiguidade` (`amb-018`, "Muito bom, repito com certeza.") tem gabarito discutível, sem marcador de ironia ou elogio.
-- **`extracao_pedido` é a tarefa que discrimina:** o LoRA de 1,5B empata com o Haiku em nota (89,4) e em itens com nota máxima (43 de 60 cada). Por categoria os dois divergem (o Haiku vai melhor em `correcao`, 100 contra 70,8, e `quantidade_extenso`; o LoRA em `negacao` e `typo`), mas com poucos itens por categoria.
-- **Isso não quer dizer que o LoRA é melhor que o Haiku.** O Haiku foi avaliado sem exemplos e sem as convenções do gabarito (parte do que conta como erro é convenção, como "ao ponto" contra "no ponto" no `hard-011`, já marcado como ambíguo). O LoRA foi treinado exatamente nesse formato.
-- O LoRA ganha muito na tarefa treinada (40,6 para 89,4 contra o base) e **perde nas outras duas**: cerca de 12 pontos na `intencao` e na `ambiguidade` tolerante. Coincide com um custo de especialização, mas são 5 e 6 itens, uma só execução: indício, não prova. A causa da queda na `intencao` não foi identificada (a hipótese de o LoRA responder JSON foi testada e descartada: 0 de 88).
-- Na `ambiguidade` a nota rígida escondia a diferença entre os Qwen (vários `b) elogio sincero` pontuavam zero com a letra certa). A nota tolerante foi **criada depois de ver esse resultado**; as duas aparecem por isso.
+- **Extração:** o v2 é o melhor nas duas métricas (96,1 e 90,0 de exact match, contra 89,4 e 75,0 do Haiku). Isso **não quer dizer que o v2 é melhor que o Haiku em geral**: o Haiku foi avaliado sem exemplos e sem as convenções do gabarito (parte do erro é convenção, como "ao ponto" contra "no ponto" no `hard-011`, já marcado como ambíguo), e o v2 foi treinado em dados sintéticos de um gerador que compartilha essas convenções. O conjunto tem 60 itens e 6 a 8 por categoria.
+- **Custo de especialização:** o v1 perdia cerca de 12 pontos na `intencao` e na `ambiguidade` tolerante contra o base. O v2 **recupera a `intencao`** (64,6 contra 62,5 do base, uma diferença de 1 item) e ainda perde 7,5 pontos na `ambiguidade` tolerante (3 itens). Portanto o custo não é uniforme, e eu não sei explicar por que o v2 preserva mais; é uma execução só, em amostras pequenas.
+- **`intencao` e `ambiguidade` não separam modelos fortes:** o Haiku tira 100,0 e 97,5 (efeito teto). O único erro dele na `ambiguidade` (`amb-018`) tem gabarito discutível.
+- **Formato:** na `ambiguidade` a nota rígida (v2: 40,0) mede seguir a instrução "só a letra"; vários modelos respondem `b) elogio sincero`. A nota tolerante, **criada depois de ver esse resultado**, mede a compreensão. Na `intencao`, o v2 devolveu 4 respostas fora das etiquetas (como "sem resposta adequada").
 - A média mistura tarefas muito diferentes e não é uma "nota geral". O custo da rodada com API não foi medido.
+
+**Histórico de correção:** a primeira versão desta tabela chamava de "LoRA" o adapter v1 por engano (o repositório do Hugging Face ainda tinha os pesos do v1). Foi detectado ao repontuar as respostas com a métrica do projeto de fine-tuning, os pesos do v2 foram reenviados e a rodada foi repetida.
 
 ## Limitações conhecidas dos datasets
 
