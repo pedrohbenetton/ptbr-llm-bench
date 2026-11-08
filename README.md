@@ -1,6 +1,8 @@
 # ptbr-llm-bench
 
-Benchmark pequeno e escrito à mão para comparar LLMs em PT-BR informal (gírias, abreviações, erros de digitação, correções no meio da frase).
+[![CI](https://github.com/pedrohbenetton/ptbr-llm-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/pedrohbenetton/ptbr-llm-bench/actions/workflows/ci.yml)
+
+Benchmark pequeno e escrito à mão para comparar LLMs em PT-BR informal (gírias, abreviações, erros de digitação, correções no meio da frase). A tarefa `extracao_pedido` reaproveita o conjunto difícil do projeto de fine-tuning [pedido-extractor-ptbr](https://github.com/pedrohbenetton/pedido-extractor-ptbr).
 
 **Status:** núcleo (tarefas, scorers, runner, relatório), adapters (Anthropic e Hugging Face) e três datasets escritos à mão (`intencao` 48, `ambiguidade` 40, `extracao_pedido` 60) prontos e testados. Uma primeira rodada com dois modelos abertos foi executada (veja Resultados); modelos de API ainda não. Veja [SPEC.md](SPEC.md).
 
