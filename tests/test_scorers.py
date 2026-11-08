@@ -36,3 +36,14 @@ def test_json_fields_invalid_json_is_zero():
 
 def test_json_fields_compares_strings_normalized():
     assert json_fields_scorer('{"n": "Açaí"}', {"n": "acai"}) == 1.0
+
+
+def test_choice_scorer_le_a_letra_inicial():
+    from ptbrbench.scorers import choice_scorer
+
+    for pred in ("a", "A", "a)", "(a)", "a.", "a) elogio sincero", " (a) texto\noutra linha"):
+        assert choice_scorer(pred, "a") == 1.0, pred
+        assert choice_scorer(pred, "b") == 0.0, pred
+    for pred in ("", "a resposta é b", "talvez", "ab", "elogio sincero"):
+        assert choice_scorer(pred, "a") == 0.0, pred
+        assert choice_scorer(pred, "b") == 0.0, pred

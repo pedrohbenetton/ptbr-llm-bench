@@ -23,6 +23,7 @@ class Task:
     scorer: Scorer
     system: str = ""
     meta: dict[str, Any] = field(default_factory=dict)
+    lenient_scorer: Scorer | None = None  # leitura tolerante, reportada ao lado da rígida
 
     def __post_init__(self) -> None:
         if not self.examples:

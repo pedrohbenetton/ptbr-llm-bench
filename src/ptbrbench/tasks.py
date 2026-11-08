@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from ptbrbench.core import Example, Task
-from ptbrbench.scorers import json_fields_scorer, label_scorer
+from ptbrbench.scorers import choice_scorer, json_fields_scorer, label_scorer
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
@@ -64,4 +64,6 @@ def load_ambiguidade(path: Path | None = None) -> Task:
         if line.strip():
             d = json.loads(line)
             exs.append(Example(d["id"], d["prompt"], d["gold"], d["tag"]))
-    return Task("ambiguidade", exs, label_scorer, system=AMBIGUIDADE_SYSTEM)
+    return Task(
+        "ambiguidade", exs, label_scorer, system=AMBIGUIDADE_SYSTEM, lenient_scorer=choice_scorer
+    )

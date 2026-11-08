@@ -19,6 +19,16 @@ def label_scorer(pred: str, gold: str) -> float:
     return float(normalize(first) == normalize(gold))
 
 
+_CHOICE = re.compile(r"^\s*\(?([a-d])(?:[).:]|\s*$)", re.IGNORECASE)
+
+
+def choice_scorer(pred: str, gold: str) -> float:
+    """Tolerante: lê a letra inicial da primeira linha ("a", "(b)", "b) texto")."""
+    lines = pred.strip().splitlines()
+    m = _CHOICE.match(lines[0]) if lines else None
+    return float(bool(m) and m.group(1).casefold() == gold.casefold())
+
+
 def extract_json(text: str) -> dict | None:
     start = text.find("{")
     while start != -1:

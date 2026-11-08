@@ -12,7 +12,7 @@ from pathlib import Path
 
 from ptbrbench.core import Model, Task
 from ptbrbench.report import render_report
-from ptbrbench.runner import run
+from ptbrbench.runner import run, score_outputs
 from ptbrbench.tasks import load_ambiguidade, load_extracao_pedido, load_intencao
 
 TASKS: dict[str, Callable[[], Task]] = {
@@ -58,7 +58,41 @@ def build_model(spec: str, effort: str | None = "low") -> Model:
     return hf_model(tok, generate)
 
 
+def _write(results: dict, out: Path) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "results.json").write_text(
+        json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    md = render_report(results)
+    (out / "report.md").write_text(md + "\n", encoding="utf-8")
+    print(md)
+
+
+def rescore_main(argv: list[str]) -> None:
+    """`ptbrbench rescore results.json --out DIR`: repontua respostas salvas, sem rodar modelos."""
+    ap = argparse.ArgumentParser(prog="ptbrbench rescore")
+    ap.add_argument("results", help="results.json de uma rodada anterior (com `outputs`)")
+    ap.add_argument("--out", required=True)
+    a = ap.parse_args(argv)
+    old = json.loads(Path(a.results).read_text(encoding="utf-8"))
+    new: dict = {}
+    for model, tasks in old.items():
+        new[model] = {}
+        for name, r in tasks.items():
+            if "outputs" not in r:
+                ap.error(f"{model}/{name}: sem respostas brutas ('outputs'); rode de novo")
+            task = select_tasks([name], None)[0]
+            new[model][name] = score_outputs(task, r["outputs"])
+    _write(new, Path(a.out))
+
+
 def main(argv: list[str] | None = None, model_factory: Callable[[str], Model] | None = None) -> None:
+    if argv is None:
+        import sys
+
+        argv = sys.argv[1:]
+    if argv and argv[0] == "rescore":
+        return rescore_main(argv[1:])
     ap = argparse.ArgumentParser(prog="ptbrbench")
     ap.add_argument("--model", action="append", default=[], help="anthropic:<id> | hf:<id>[@adapter]")
     ap.add_argument("--tasks", nargs="+", default=list(TASKS), choices=list(TASKS))
@@ -74,11 +108,4 @@ def main(argv: list[str] | None = None, model_factory: Callable[[str], Model] | 
     tasks = select_tasks(a.tasks, a.limit)
     results = run({s: factory(s) for s in a.model}, tasks)
 
-    out = Path(a.out)
-    out.mkdir(parents=True, exist_ok=True)
-    (out / "results.json").write_text(
-        json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-    md = render_report(results)
-    (out / "report.md").write_text(md + "\n", encoding="utf-8")
-    print(md)
+    _write(results, Path(a.out))

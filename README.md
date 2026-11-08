@@ -19,7 +19,17 @@ uv run --extra hf python -m ptbrbench --model hf:Qwen/Qwen2.5-1.5B-Instruct --mo
 uv run --extra api python -m ptbrbench --model anthropic:claude-haiku-5-5 --limit 5
 ```
 
-Gera `results/results.json` (score por exemplo) e `results/report.md` (tabela por tarefa).
+Gera `results/results.json` (nota e resposta bruta por exemplo) e `results/report.md` (tabela por tarefa).
+
+### Nota rígida e nota tolerante
+
+Cada resposta é pontuada de forma **rígida** (a resposta inteira tem que ser exatamente a etiqueta ou a letra pedida: mede seguir a instrução). Na `ambiguidade` há também a nota **tolerante** (`ambiguidade (tol.)`), que lê só a letra inicial (`b) texto` conta como `b`) e mede se o modelo entendeu a frase. A média e a ordenação da tabela usam a nota rígida.
+
+A nota tolerante foi acrescentada **depois** da primeira rodada, ao ver que respostas como `b) elogio sincero` pontuavam zero com a letra certa. Para repontuar uma rodada salva, sem rodar os modelos de novo:
+
+```bash
+uv run python -m ptbrbench rescore results/results.json --out results/rescored
+```
 
 ## Limitações conhecidas dos datasets
 
