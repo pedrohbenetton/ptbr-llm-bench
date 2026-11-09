@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/pedrohbenetton/ptbr-llm-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/pedrohbenetton/ptbr-llm-bench/actions/workflows/ci.yml)
 
-Benchmark pequeno e escrito à mão para comparar LLMs em PT-BR informal (gírias, abreviações, erros de digitação, correções no meio da frase). A tarefa `extracao_pedido` reaproveita o conjunto difícil do projeto de fine-tuning [pedido-extractor-ptbr](https://github.com/pedrohbenetton/pedido-extractor-ptbr).
+Benchmark pequeno para comparar LLMs em PT-BR informal, com datasets escritos com ajuda de IA e revisados com apoio externo (veja Limitações) (gírias, abreviações, erros de digitação, correções no meio da frase). A tarefa `extracao_pedido` reaproveita o conjunto difícil do projeto de fine-tuning [pedido-extractor-ptbr](https://github.com/pedrohbenetton/pedido-extractor-ptbr).
 
-**Status:** núcleo (tarefas, scorers, runner, relatório), adapters (Anthropic e Hugging Face) e três datasets escritos à mão (`intencao` 48, `ambiguidade` 40, `extracao_pedido` 60) prontos e testados. Uma primeira rodada (dois modelos abertos e o Claude Haiku 5.5) foi executada; veja Resultados. Veja [SPEC.md](SPEC.md).
+**Status:** núcleo (tarefas, scorers, runner, relatório), adapters (Anthropic e Hugging Face) e três datasets escritos com ajuda de IA (`intencao` 48, `ambiguidade` 40, `extracao_pedido` 60) prontos e testados. Uma primeira rodada (dois modelos abertos e o Claude Haiku 5.5) foi executada; veja Resultados. Veja [SPEC.md](SPEC.md).
 
 ```bash
 uv sync
@@ -57,6 +57,8 @@ Na `extracao_pedido` a nota é por campo do JSON e compara listas estritamente (
 **Histórico de correção:** a primeira versão desta tabela chamava de "LoRA" o adapter v1 por engano (o repositório do Hugging Face ainda tinha os pesos do v1). Foi detectado ao repontuar as respostas com a métrica do projeto de fine-tuning, os pesos do v2 foram reenviados e a rodada foi repetida.
 
 ## Limitações conhecidas dos datasets
+
+- **Autoria:** os rascunhos de `intencao` e `ambiguidade` foram gerados com ajuda de IA e passaram por uma revisão externa também feita com IA; não houve revisão humana independente. O conjunto difícil de extração foi escrito pelo autor com ajuda de IA, sem revisão externa.
 
 - `intencao`: os itens com tag `ambigua` têm rótulo escolhido por julgamento. `int-048` ("ainda n chegou, ta chegando?") é `acompanhamento`, mas poderia ser lido como `reclamacao`.
 - `ambiguidade`: rascunho revisado uma vez; pode ainda ser fácil para modelos fortes (efeito teto). `amb-035` admite outra leitura. Os regionalismos foram escritos de memória.

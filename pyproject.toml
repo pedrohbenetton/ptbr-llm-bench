@@ -1,7 +1,7 @@
 [project]
 name = "ptbr-llm-bench"
 version = "0.1.0"
-description = "Benchmark escrito à mão para LLMs em PT-BR informal"
+description = "Benchmark pequeno para LLMs em PT-BR informal"
 requires-python = ">=3.10"
 dependencies = []
 
